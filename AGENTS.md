@@ -100,3 +100,14 @@ At the end of a task, report:
 - validation results
 - blockers or unresolved issues
 - any deviation from the approved plan
+
+## Context loading
+
+Before implementing a task:
+
+1. Read the current task completely.
+2. Read the approved spec and plan referenced by that task.
+3. Inspect only the repository files relevant to the task before editing.
+4. Reuse existing patterns, components, tokens, and utilities when they exist.
+5. Do not load or modify unrelated areas of the repository without a clear reason.
+6. If required context is missing or contradictory, stop and report the gap before implementation.
