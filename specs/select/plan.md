@@ -9,14 +9,27 @@ state, ref, effect, and ID hooks; the plain-CSS import pattern; and the semantic
 theme variables in `src/index.css` (`--text`, `--text-h`, `--bg`, `--border`,
 `--accent`, `--accent-bg`, `--accent-border`, `--shadow`, and `--sans`).
 
-The implementation should be a controlled, custom single-select built from React
-and DOM primitives. A native `<select>` would provide strong baseline
+The approved implementation is a controlled, custom single-select built from
+React and DOM primitives. A native `<select>` would provide strong baseline
 accessibility, but it cannot reliably satisfy the approved focus model, explicit
 open state, placeholder behavior, or non-selectable empty-state message across
 browsers. A third-party headless select would satisfy much of the behavior but
 would add a runtime dependency before the project has established a component
-dependency strategy. The custom button-trigger/listbox approach is therefore the
-best fit, provided its keyboard and focus behavior is covered thoroughly by tests.
+dependency strategy. The custom button-trigger/listbox approach is the approved
+V1 direction, provided its keyboard and focus behavior is covered thoroughly by
+tests.
+
+## Approved review decisions
+
+- Select is controlled; the consumer owns the selected value.
+- Accessible naming requires either a visible `label` or an `ariaLabel`.
+- Behavior is implemented with the existing React and DOM APIs, with no new
+  runtime dependency.
+- The popup is rendered locally without a portal, automatic flipping, or collision
+  detection in V1.
+- Minimal React/Vite Storybook tooling plus Vitest, `jsdom`, React Testing Library,
+  and `user-event` are approved as development dependencies for the implementation
+  phase. They must not be installed while this plan is being reviewed.
 
 ## Existing components and primitives to reuse
 
@@ -39,7 +52,7 @@ There is no existing field wrapper, label, helper/error component, popup utility
 focus utility, or icon component to reuse. The first version should keep these
 details internal to Select instead of creating speculative shared abstractions.
 
-## Proposed public API
+## Approved public API direction
 
 Export `Select`, `SelectOption`, `SelectSize`, and `SelectProps` from the component
 folder. The API should remain intentionally narrow:
@@ -108,7 +121,12 @@ focus. A trigger click toggles the popup. The native `disabled` attribute blocks
 all trigger activation, while handlers also guard against state changes when
 disabled.
 
-Changes to options while the popup is open are outside the valid V1 usage contract.
+Changes to `options` while the popup is open are explicitly outside the valid V1
+usage contract, regardless of whether the change comes from async loading, local
+state, or any other source. This is a caller constraint separate from async option
+loading being out of scope. V1 may assume that option order, values, and labels
+remain stable from open through close and does not need reconciliation behavior
+for mid-session option changes.
 
 ## Accessibility approach
 
@@ -146,11 +164,30 @@ Create a colocated `Select.css` using a component namespace such as
 Reuse the existing semantic colors, font, border, accent, and shadow variables.
 Add only missing field-level variables to `src/index.css` when a value is genuinely
 shared across Select states—for example control radii, control heights, spacing,
-or error foreground. Size-dependent height, padding, font size, and option spacing
-should be centralized in CSS custom properties for `sm`, `md`, and `lg`, with the
-base rule representing `md`. Component properties should have sensible fallbacks
-to the existing global tokens so the Select remains usable in Storybook and when
-consumed outside the starter page.
+or error foreground. Size-dependent values should be centralized in component
+CSS custom properties, with the base rule representing the default `md` size.
+Component properties should have sensible fallbacks to the existing global tokens
+so the Select remains usable in Storybook and when consumed outside the starter
+page.
+
+This plan proposes the following visual scale; implementation tasks must carry
+these values forward rather than choosing dimensions implicitly:
+
+| Size attribute | `sm` | `md` (default) | `lg` |
+| --- | ---: | ---: | ---: |
+| Trigger and option minimum height | 32px | 40px | 48px |
+| Trigger and option type | 14px / 20px | 16px / 24px | 18px / 26px |
+| Horizontal content padding | 10px | 12px | 16px |
+| Visible label type | 12px / 16px | 14px / 20px | 16px / 24px |
+| Helper and error type | 12px / 16px | 12px / 16px | 14px / 20px |
+| Label-to-control gap | 4px | 6px | 8px |
+| Control and popup radius | 6px | 8px | 10px |
+| Chevron box | 16px | 18px | 20px |
+
+The control border and focus ring remain 1px and 2px respectively at every size.
+The popup gap remains 4px and its maximum height remains 240px; scrolling handles
+longer option lists. These fixed values avoid making compact controls visually
+fragile or allowing large controls to produce an excessively tall popup.
 
 The popup should be absolutely positioned relative to the field, match the
 trigger width, layer above adjacent content, and use a bounded max height with
@@ -192,11 +229,12 @@ No `tasks.md` is part of this plan.
 
 ## Storybook impact
 
-Because Storybook is not installed, the implementation phase will need a minimal
-React/Vite Storybook setup and corresponding scripts. These are development-only
-dependencies and are justified as the repository's component documentation and
+Because Storybook is not installed, the implementation phase will add the approved
+minimal React/Vite Storybook setup and corresponding scripts. These
+development-only dependencies are the repository's component documentation and
 manual interaction surface; no optional addon suite should be introduced for the
-first component.
+first component. Installation happens only after implementation tasks are created,
+not during planning.
 
 Stories should cover default `md`, `sm`, `lg`, preselected, disabled, required,
 helper text, error replacing helper text, no visible label with `ariaLabel`, and
@@ -208,10 +246,11 @@ Storybook preview so the same tokens and light/dark behavior apply.
 
 ## Testing strategy
 
-Add the smallest practical DOM interaction stack: Vitest with `jsdom`, React
-Testing Library, and `user-event`. These are development-only dependencies; do
-not add a runtime UI or accessibility library. Tests should use a controlled
-harness and assert observable behavior rather than internal state.
+Use the approved minimal DOM interaction stack: Vitest with `jsdom`, React Testing
+Library, and `user-event`. These development-only dependencies will be installed
+during implementation, not during planning. Do not add a runtime UI or
+accessibility library. Tests should use a controlled harness and assert observable
+behavior rather than internal state.
 
 Coverage should include:
 
@@ -236,7 +275,7 @@ Storybook static build in verification. Then manually traverse every story using
 only the keyboard and perform a screen-reader smoke check for name, value,
 expanded state, focused option, error, required, and disabled announcements.
 
-## Assumptions and unresolved technical questions
+## Approved constraints, assumptions, and unresolved technical questions
 
 - The Select is controlled; uncontrolled state and `defaultValue` are not part of
   version one.
@@ -246,10 +285,10 @@ expanded state, focused option, error, required, and disabled announcements.
   spec.
 - Popup placement is below the trigger and in the local DOM. Portals, automatic
   flipping, and positioning inside clipping containers are not required.
-- Options do not change while the popup is open; async loading is out of scope.
-- The exact visual measurements for `sm`, `md`, and `lg` sm → 32px control height
-md → 40px
-lg → 48px
+- `options` must remain stable while the popup is open. This explicit V1 usage
+  constraint applies to all prop changes, not only async loading.
+- The `sm`, `md`, and `lg` measurements are defined by the proposed scale in the
+  styling section and must not be silently re-decided during implementation.
 - The repository has no stated browser support matrix. The implementation should
   target the modern browsers supported by the current Vite/React baseline and use
   standard DOM/ARIA APIs only.
