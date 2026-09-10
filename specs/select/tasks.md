@@ -160,8 +160,9 @@ trigger tab-order behavior. Keep focus on the trigger when the open list is empt
 Implement trigger toggling, option selection, and open-only outside-pointer
 handling through the shared helpers in the plan. Option selection must call the
 controlled callback, close, and return focus to the trigger. An outside pointer
-must close without changing the value, preventing native focus movement, or
-forcing focus back to the trigger. Disabled interaction remains inert.
+must close without changing the value or forcing focus back to the trigger.
+Outside-pointer handling must not call `preventDefault()` or otherwise interfere
+with the browser's native focus movement. Disabled interaction remains inert.
 
 ### Done when
 
@@ -250,18 +251,20 @@ open.
 
 **Parallelizable:** No.
 
-Run the full verification sequence from the plan: lint, non-watch automated tests,
-the production app build, and the static Storybook build. Manually traverse the
-Storybook stories with mouse and keyboard and perform the planned screen-reader
-smoke check. Compare the result against the approved spec and plan, inspect the
-dependency and file diff for scope creep, and correct only defects within the
-approved implementation.
+Run automated validation from the plan: lint, non-watch automated tests, the
+production app build, and the static Storybook build. Separately, run manual
+validation through the Storybook stories: keyboard interaction, pointer
+interaction, light/dark visual review, and the planned screen-reader smoke test.
+Compare the result against the approved spec and plan, inspect the dependency and
+file diff for scope creep, and correct only defects within the approved
+implementation.
 
 ### Done when
 
-- Lint, tests, application build, and static Storybook build all pass.
-- Manual pointer, keyboard-only, light/dark, and screen-reader checks pass for the
-  story matrix.
+- Automated validation passes: lint, tests, application build, and static
+  Storybook build.
+- Manual validation passes: keyboard, pointer, light/dark visual review, and
+  screen-reader smoke testing across the story matrix.
 - Every spec acceptance criterion is accounted for by automated or explicitly
   recorded manual validation.
 - The dependency diff contains only the approved development tooling and no new
