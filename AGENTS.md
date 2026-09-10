@@ -111,3 +111,24 @@ Before implementing a task:
 4. Reuse existing patterns, components, tokens, and utilities when they exist.
 5. Do not load or modify unrelated areas of the repository without a clear reason.
 6. If required context is missing or contradictory, stop and report the gap before implementation.
+
+
+## Tool usage
+
+Agents may use available repository tools to:
+
+- read and search files relevant to the current task
+- edit files explicitly required by the approved task or plan
+- run approved repository commands
+- inspect Git status and diffs
+
+Agents must not use tools to:
+
+- modify unrelated files
+- install unapproved dependencies
+- rewrite Git history
+- perform deployment actions
+- access or modify secrets
+- bypass approval gates defined in this file
+
+Tool use must remain scoped to the current approved task.
