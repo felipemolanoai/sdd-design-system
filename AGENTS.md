@@ -132,3 +132,43 @@ Agents must not use tools to:
 - bypass approval gates defined in this file
 
 Tool use must remain scoped to the current approved task.
+
+
+## Implementation workflow (Defining the workflow / Loop)
+
+For every implementation task:
+
+1. Read
+   - Read the current task completely.
+   - Read the approved spec and plan referenced by the task.
+   - Read relevant repository rules.
+
+2. Understand
+   - Inspect the existing implementation and related repository patterns.
+   - Identify the smallest valid change.
+   - Confirm that the task can be completed without changing approved scope or architecture.
+
+3. Change
+   - Modify only the files required by the current approved task.
+   - Reuse existing patterns, components, tokens, and utilities when available.
+   - Do not implement unrelated improvements.
+
+4. Validate
+   - Run the validation required for the current task.
+   - Fix failures caused by the current change.
+   - Do not hide, skip, or ignore failed validation.
+
+5. Report
+   - Report files created or modified.
+   - Report validation executed and results.
+   - Report blockers, skipped validation, or deviations.
+
+
+## Retry behavior in a loop (rules to Agent don´t get stuck forever at some point something happen)
+
+If validation fails:
+
+- first determine whether the failure was introduced by the current task
+- fix failures caused by the current task
+- re-run the relevant validation
+- if repeated attempts reveal a conflict with the approved spec, plan, or architecture, stop and report instead of expanding scope
