@@ -40,13 +40,25 @@ For each implementation task:
 
 ## Validation
 
-Before reporting a task as complete:
+For implementation tasks:
 
-- run TypeScript type checking when available
-- run lint
-- run relevant automated tests
-- run build validation when the task affects build configuration
+- run the repository TypeScript typecheck command once it exists
+- run lint after code changes
+- Run targeted tests during individual implementation tasks when the relevant test file exists.
+- run the full automated test suite during final validation
+- run the application production build during final validation
+- run the Storybook static build during final validation
 - report any validation that could not be executed
+
+For final validation:
+
+- verify every acceptance criterion in the approved spec
+- inspect the dependency diff for unapproved packages
+- inspect the file diff for changes outside the approved plan/task scope
+- perform manual keyboard validation
+- perform manual pointer validation
+- perform light/dark visual review
+- perform a screen-reader smoke test
 
 Do not claim validation passed unless it was actually executed successfully.
 
