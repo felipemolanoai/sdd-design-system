@@ -272,3 +272,20 @@ implementation.
 - The file diff matches the plan's expected files, leaves `src/App.tsx` and
   `src/App.css` unchanged, and contains no unapproved feature or architectural
   change.
+
+## Tool usage
+
+Agents may use available repository tools to:
+
+- read and search project files
+- edit files required by the current approved task
+- run approved validation commands
+- inspect Git status and diffs
+
+Agents must not use tools to:
+
+- modify unrelated files
+- install unapproved dependencies
+- change Git history
+- perform deployment actions
+- modify secrets or environment credentials
