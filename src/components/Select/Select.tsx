@@ -114,6 +114,18 @@ export function Select({
     triggerRef.current?.focus()
   }
 
+  function handleTriggerClick() {
+    if (disabled) {
+      return
+    }
+
+    if (isOpen) {
+      close()
+    } else {
+      open()
+    }
+  }
+
   function handleTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
     if (disabled) {
       return
@@ -191,6 +203,29 @@ export function Select({
     optionRefs.current[activeIndex]?.focus()
   }, [activeIndex, isOpen])
 
+  useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+
+    function handleDocumentPointerDown(event: PointerEvent) {
+      const root = rootRef.current
+      const target = event.target
+
+      if (root === null || !(target instanceof Node) || root.contains(target)) {
+        return
+      }
+
+      close()
+    }
+
+    document.addEventListener('pointerdown', handleDocumentPointerDown)
+
+    return () => {
+      document.removeEventListener('pointerdown', handleDocumentPointerDown)
+    }
+  }, [isOpen])
+
   return (
     <div
       ref={rootRef}
@@ -225,6 +260,7 @@ export function Select({
         className="select-field__trigger"
         disabled={disabled}
         tabIndex={isOpen && activeIndex >= 0 ? -1 : 0}
+        onClick={handleTriggerClick}
         onKeyDown={handleTriggerKeyDown}
         aria-label={ariaLabel}
         aria-haspopup="listbox"
@@ -268,6 +304,7 @@ export function Select({
                   role="option"
                   aria-selected={option.value === value}
                   tabIndex={index === activeIndex ? 0 : -1}
+                  onClick={() => commitSelection(index)}
                   onKeyDown={(event) => handleOptionKeyDown(event, index)}
                 >
                   {option.label}
