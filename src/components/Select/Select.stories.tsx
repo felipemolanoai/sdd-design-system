@@ -9,6 +9,11 @@ const options: SelectOption[] = [
   { value: 'research', label: 'Research' },
 ]
 
+const manyOptions = Array.from({ length: 50 }, (_, index) => ({
+  value: `option-${index + 1}`,
+  label: `Option ${index + 1}`,
+}))
+
 const emptyOptions: SelectOption[] = []
 
 const storyFrameStyles: CSSProperties = {
@@ -131,4 +136,12 @@ export const InteractionReview: Story = {
       </p>
     </div>
   ),
+}
+
+export const ManyOptions = {
+  args: {
+    label: 'Many options',
+    placeholder: 'Choose an option',
+    options: manyOptions,
+  },
 }
