@@ -55,6 +55,7 @@ describe('Select public rendering and accessibility', () => {
         <Select {...defaultProps} label="Default size" />
         <Select {...defaultProps} label="Small size" size="sm" />
         <Select {...defaultProps} label="Large size" size="lg" />
+        <Select {...defaultProps} label="XL size" size="xl" />
       </>,
     )
 
@@ -67,10 +68,14 @@ describe('Select public rendering and accessibility', () => {
     const largeTrigger = screen.getByRole('button', {
       name: 'Large size Choose a team',
     })
+    const xlTrigger = screen.getByRole('button', {
+      name: 'XL size Choose a team',
+    })
 
     expect(getField(defaultTrigger).getAttribute('data-size')).toBe('md')
     expect(getField(smallTrigger).getAttribute('data-size')).toBe('sm')
     expect(getField(largeTrigger).getAttribute('data-size')).toBe('lg')
+    expect(getField(xlTrigger).getAttribute('data-size')).toBe('xl')
     expect(screen.queryByRole('option', { name: 'Choose a team' })).toBeNull()
   })
 

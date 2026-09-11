@@ -77,6 +77,12 @@ export const Large: Story = {
   },
 }
 
+export const XL: Story = {
+  args: {
+    size: 'xl',
+  },
+}
+
 export const Preselected: Story = {
   args: {
     value: 'engineering',

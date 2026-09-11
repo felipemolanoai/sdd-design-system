@@ -273,3 +273,74 @@ implementation.
   `src/App.css` unchanged, and contains no unapproved feature or architectural
   change.
 
+## Task 11 — Implement the approved `xl` Select size
+
+**Depends on:** Completion of Tasks 1–10 and the updated approved
+`specs/select/spec.md` and `specs/select/plan.md` that add `xl` to the Select size
+contract and define its visual scale.
+
+**Parallelizable:** No.
+
+### Expected files to change
+
+- `src/components/Select/Select.tsx`
+- `src/components/Select/Select.css`
+- `src/components/Select/Select.stories.tsx`
+- `src/components/Select/Select.test.tsx`
+
+### Implementation scope
+
+Extend the exported `SelectSize` type to accept `xl` while preserving `md` as the
+default. Add an `xl` size rule to `Select.css` using the exact approved plan values:
+56px minimum trigger and option height, 20px / 28px trigger and option typography,
+20px horizontal padding, 18px / 28px label typography, 16px / 24px helper and
+error typography, 10px label-to-control gap, 12px control and popup radius, and a
+22px chevron. Keep the 1px border, 2px focus ring, 4px popup gap, and 240px popup
+maximum height unchanged.
+
+Add an `XL` Storybook story through the existing public Select API, using the
+existing controlled wrapper where interaction requires state. Extend the automated
+tests to cover explicit `xl` rendering and retain coverage proving that omitted
+`size` resolves to `md`. Map those assertions to acceptance criteria 10 and 11.
+
+`xl` changes visual sizing only. Do not change keyboard, pointer, focus, or
+accessibility behavior; do not redesign the component architecture; and do not add,
+remove, or update dependencies. Do not modify the approved spec, plan, Tasks 1–10,
+starter application files, shared styles, or files outside the expected list.
+
+### Validation commands
+
+- `npm run test -- src/components/Select/Select.test.tsx`
+- `npm run test`
+- `npx tsc -b --pretty false`
+- `npm run lint`
+- `npm run build`
+- `npm run build-storybook`
+- `git diff --check`
+- `git status --short`
+- `git diff --stat`
+- `git diff -- package.json package-lock.json`
+
+After the automated commands, inspect the complete file diff for scope creep.
+Manually review the `XL` story with keyboard and pointer, verify focus behavior,
+compare light and dark presentation against the approved scale, and perform the
+planned screen-reader smoke test. Confirm that `xl` behaves identically to the
+existing sizes apart from its visual measurements.
+
+### Done when
+
+- `SelectSize` accepts `xl`, explicit `size="xl"` renders the approved size
+  attribute, and omitting `size` still renders `md`.
+- `Select.css` implements every approved `xl` measurement and preserves the fixed
+  border, focus-ring, popup-gap, and popup-height values.
+- Storybook includes an interactive `XL` story using only the approved public API.
+- Automated tests cover explicit `xl` and the unchanged `md` default through
+  observable public behavior, with acceptance criteria 10 and 11 accounted for.
+- Keyboard, pointer, focus, accessibility, and all non-size behavior remain
+  unchanged, with no architecture or dependency change.
+- Targeted tests, the full test suite, TypeScript validation, lint, the production
+  build, and the static Storybook build all pass.
+- Manual keyboard, pointer, focus, light/dark, and screen-reader checks pass for
+  `xl` without revealing a behavioral or accessibility regression.
+- Git status and diff confirm that implementation changes are limited to the four
+  expected files and that the dependency diff is empty.
