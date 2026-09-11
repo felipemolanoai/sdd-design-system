@@ -1,4 +1,11 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FocusEvent,
+  type KeyboardEvent,
+} from 'react'
 import './Select.css'
 
 export interface SelectOption {
@@ -103,9 +110,78 @@ export function Select({
     triggerRef.current?.focus()
   }
 
-  // Tasks 5 and 6 attach these shared transitions to keyboard and pointer events.
-  void open
-  void commitSelection
+  function restoreTriggerFocus() {
+    triggerRef.current?.focus()
+  }
+
+  function handleTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    if (disabled) {
+      return
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+
+      if (!isOpen) {
+        open()
+      }
+
+      return
+    }
+
+    if (event.key === 'Escape' && isOpen) {
+      event.preventDefault()
+      close()
+      restoreTriggerFocus()
+    }
+  }
+
+  function handleOptionKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
+    if (disabled || !isOpen) {
+      return
+    }
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault()
+        setActiveIndex(Math.min(index + 1, options.length - 1))
+        break
+      case 'ArrowUp':
+        event.preventDefault()
+        setActiveIndex(Math.max(index - 1, 0))
+        break
+      case 'Enter':
+      case ' ':
+        event.preventDefault()
+        commitSelection(index)
+        break
+      case 'Escape':
+        event.preventDefault()
+        close()
+        restoreTriggerFocus()
+        break
+    }
+  }
+
+  function handleRootBlur(event: FocusEvent<HTMLDivElement>) {
+    if (!isOpen) {
+      return
+    }
+
+    const nextFocusedElement = event.relatedTarget
+
+    if (
+      nextFocusedElement instanceof Node &&
+      event.currentTarget.contains(nextFocusedElement)
+    ) {
+      return
+    }
+
+    close()
+  }
 
   useEffect(() => {
     if (!isOpen || activeIndex < 0) {
@@ -119,6 +195,7 @@ export function Select({
     <div
       ref={rootRef}
       className={rootClassName}
+      onBlur={handleRootBlur}
       data-size={size}
       data-open={isOpen ? 'true' : 'false'}
       data-invalid={hasError ? 'true' : 'false'}
@@ -147,6 +224,8 @@ export function Select({
         type="button"
         className="select-field__trigger"
         disabled={disabled}
+        tabIndex={isOpen && activeIndex >= 0 ? -1 : 0}
+        onKeyDown={handleTriggerKeyDown}
         aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -189,6 +268,7 @@ export function Select({
                   role="option"
                   aria-selected={option.value === value}
                   tabIndex={index === activeIndex ? 0 : -1}
+                  onKeyDown={(event) => handleOptionKeyDown(event, index)}
                 >
                   {option.label}
                 </button>
