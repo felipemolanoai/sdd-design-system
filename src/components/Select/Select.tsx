@@ -13,7 +13,7 @@ export interface SelectOption {
   label: string
 }
 
-export type SelectSize = 'sm' | 'md' | 'lg'
+export type SelectSize = 'sm' | 'md' | 'lg' | 'xl'
 
 interface SelectBaseProps {
   /**

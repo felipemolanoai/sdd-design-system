@@ -27,6 +27,8 @@ tests.
   runtime dependency.
 - The popup is rendered locally without a portal, automatic flipping, or collision
   detection in V1.
+- `xl` extends only the visual size scale. Keyboard, pointer, focus, and
+  accessibility behavior remain identical across every size.
 - Minimal React/Vite Storybook tooling plus Vitest, `jsdom`, React Testing Library,
   and `user-event` are approved as development dependencies for the implementation
   phase. They must not be installed while this plan is being reviewed.
@@ -57,6 +59,8 @@ details internal to Select instead of creating speculative shared abstractions.
 Export `Select`, `SelectOption`, `SelectSize`, and `SelectProps` from the component
 folder. The API should remain intentionally narrow:
 
+- `SelectSize` is `'sm' | 'md' | 'lg' | 'xl'`; adding `xl` widens only the
+  supported visual size values.
 - `options: Array<{ value: string; label: string }>`; values are assumed unique.
 - `value: string | null` and `onChange(value: string): void`; the selected value is
   controlled by the consumer so validation and form state stay outside Select.
@@ -170,19 +174,19 @@ Component properties should have sensible fallbacks to the existing global token
 so the Select remains usable in Storybook and when consumed outside the starter
 page.
 
-This plan proposes the following visual scale; implementation tasks must carry
-these values forward rather than choosing dimensions implicitly:
+The approved size scale includes `sm`, `md`, `lg`, and `xl`. Implementation tasks
+must carry these values forward rather than choosing dimensions implicitly:
 
-| Size attribute | `sm` | `md` (default) | `lg` |
-| --- | ---: | ---: | ---: |
-| Trigger and option minimum height | 32px | 40px | 48px |
-| Trigger and option type | 14px / 20px | 16px / 24px | 18px / 26px |
-| Horizontal content padding | 10px | 12px | 16px |
-| Visible label type | 12px / 16px | 14px / 20px | 16px / 24px |
-| Helper and error type | 12px / 16px | 12px / 16px | 14px / 20px |
-| Label-to-control gap | 4px | 6px | 8px |
-| Control and popup radius | 6px | 8px | 10px |
-| Chevron box | 16px | 18px | 20px |
+| Size attribute | `sm` | `md` (default) | `lg` | `xl` |
+| --- | ---: | ---: | ---: | ---: |
+| Trigger and option minimum height | 32px | 40px | 48px | 56px |
+| Trigger and option type | 14px / 20px | 16px / 24px | 18px / 26px | 20px / 28px |
+| Horizontal content padding | 10px | 12px | 16px | 20px |
+| Visible label type | 12px / 16px | 14px / 20px | 16px / 24px | 18px / 28px |
+| Helper and error type | 12px / 16px | 12px / 16px | 14px / 20px | 16px / 24px |
+| Label-to-control gap | 4px | 6px | 8px | 10px |
+| Control and popup radius | 6px | 8px | 10px | 12px |
+| Chevron box | 16px | 18px | 20px | 22px |
 
 The control border and focus ring remain 1px and 2px respectively at every size.
 The popup gap remains 4px and its maximum height remains 240px; scrolling handles
@@ -236,13 +240,16 @@ manual interaction surface; no optional addon suite should be introduced for the
 first component. Installation happens only after implementation tasks are created,
 not during planning.
 
-Stories should cover default `md`, `sm`, `lg`, preselected, disabled, required,
-helper text, error replacing helper text, no visible label with `ariaLabel`, and
-empty options. Use a small controlled story wrapper so selection updates the
-display exactly as a consumer would. A keyboard-focused story or documented play
-instructions should make the non-wrapping arrows, confirmation, Escape, Tab, and
-Shift+Tab behavior easy to verify. Global `src/index.css` should be imported in
-Storybook preview so the same tokens and light/dark behavior apply.
+Stories should cover default `md`, `sm`, `lg`, `xl`, preselected, disabled,
+required, helper text, error replacing helper text, no visible label with
+`ariaLabel`, and empty options. Use a small controlled story wrapper so selection
+updates the display exactly as a consumer would. A keyboard-focused story or
+documented play instructions should make the non-wrapping arrows, confirmation,
+Escape, Tab, and Shift+Tab behavior easy to verify. Manual review must include the
+`xl` story in light and dark themes and confirm that its keyboard, pointer, focus,
+and accessibility behavior matches the existing sizes. Global `src/index.css`
+should be imported in Storybook preview so the same tokens and light/dark behavior
+apply.
 
 ## Testing strategy
 
@@ -255,7 +262,7 @@ behavior rather than internal state.
 Coverage should include:
 
 - label/`ariaLabel`, placeholder, selected text, helper/error precedence, required,
-  disabled, and default/explicit size rendering;
+  disabled, default `md`, and explicit `sm`, `lg`, and `xl` size rendering;
 - pointer open, option selection, trigger focus restoration, trigger re-click,
   and outside click without forced focus restoration;
 - Enter and Space opening, initial focus on selected or first option, clamped
@@ -273,7 +280,9 @@ Coverage should include:
 Run `npm run lint`, the new non-watch test command, `npm run build`, and the
 Storybook static build in verification. Then manually traverse every story using
 only the keyboard and perform a screen-reader smoke check for name, value,
-expanded state, focused option, error, required, and disabled announcements.
+expanded state, focused option, error, required, and disabled announcements. The
+manual keyboard, pointer, focus, light/dark, and screen-reader checks must include
+`xl` and confirm that sizing introduces no behavioral or accessibility difference.
 
 ## Approved constraints, assumptions, and unresolved technical questions
 
@@ -287,8 +296,8 @@ expanded state, focused option, error, required, and disabled announcements.
   flipping, and positioning inside clipping containers are not required.
 - `options` must remain stable while the popup is open. This explicit V1 usage
   constraint applies to all prop changes, not only async loading.
-- The `sm`, `md`, and `lg` measurements are defined by the proposed scale in the
-  styling section and must not be silently re-decided during implementation.
+- The `sm`, `md`, `lg`, and `xl` measurements are defined by the approved scale
+  in the styling section and must not be silently re-decided during implementation.
 - The repository has no stated browser support matrix. The implementation should
   target the modern browsers supported by the current Vite/React baseline and use
   standard DOM/ARIA APIs only.

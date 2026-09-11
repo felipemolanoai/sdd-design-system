@@ -42,6 +42,7 @@ The Select must support:
 - sm
 - md
 - lg
+- xl
 
 The default size is `md`.
 
@@ -186,7 +187,7 @@ The first version does not support:
 7. Enter selects the currently focused option.
 8. Escape closes the Select without changing the selected value.
 9. After selection with Enter, Space, or pointer, focus returns to the Select trigger.
-10. The Select supports `sm`, `md`, and `lg`.
+10. The Select supports `sm`, `md`, `lg`, and `xl`.
 11. `md` is used when no size is specified.
 12. An empty Select displays its placeholder.
 13. Error state is not communicated using color alone.
