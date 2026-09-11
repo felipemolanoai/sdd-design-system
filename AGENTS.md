@@ -90,16 +90,25 @@ Do not refactor unrelated code unless required to complete the approved task.
 
 If an improvement is useful but not required, report it separately instead of implementing it.
 
-## Reporting
+## Observability and reporting
 
-At the end of a task, report:
+At the end of every implementation task, report:
 
-- task completed
-- files created or modified
-- validation executed
+- task executed
+- files created
+- files modified
+- validation commands executed
 - validation results
+- validation that was skipped or unavailable
 - blockers or unresolved issues
-- any deviation from the approved plan
+- deviations from the approved spec, plan, or task
+- unexpected files or dependencies changed
+
+Before reporting completion:
+
+- inspect the Git diff for the current task
+- verify that changed files match the approved task scope
+- report any unexpected diff instead of hiding or reverting it silently
 
 ## Context loading
 
