@@ -63,9 +63,12 @@ export function Select({
   const idBase = id ?? generatedId
   const triggerId = id ?? `${idBase}-trigger`
   const labelId = `${idBase}-label`
+  const valueId = `${idBase}-value`
   const listboxId = `${idBase}-listbox`
   const helperId = `${idBase}-helper`
   const errorId = `${idBase}-error`
+  const requiredId = `${idBase}-required`
+  const emptyId = `${idBase}-empty`
   const optionIdPrefix = `${idBase}-option`
   const [isOpen, setIsOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
@@ -79,6 +82,16 @@ export function Select({
   const hasError = errorMessage !== undefined
   const description = hasError ? errorMessage : helperText
   const descriptionId = hasError ? errorId : helperId
+  const displayedValue = selectedOption?.label ?? placeholder
+  const triggerAccessibleName =
+    ariaLabel === undefined ? undefined : `${ariaLabel}: ${displayedValue}`
+  const triggerDescriptionIds = [
+    required ? requiredId : undefined,
+    description === undefined ? undefined : descriptionId,
+    isOpen && options.length === 0 ? emptyId : undefined,
+  ]
+    .filter((descriptionId) => descriptionId !== undefined)
+    .join(' ')
   const rootClassName = ['select-field', className].filter(Boolean).join(' ')
 
   function open() {
@@ -262,17 +275,24 @@ export function Select({
         tabIndex={isOpen && activeIndex >= 0 ? -1 : 0}
         onClick={handleTriggerClick}
         onKeyDown={handleTriggerKeyDown}
-        aria-label={ariaLabel}
+        aria-label={triggerAccessibleName}
+        aria-labelledby={
+          label === undefined ? undefined : `${labelId} ${valueId}`
+        }
+        aria-describedby={triggerDescriptionIds || undefined}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-controls={isOpen && options.length > 0 ? listboxId : undefined}
+        aria-controls={
+          isOpen ? (options.length > 0 ? listboxId : emptyId) : undefined
+        }
         aria-invalid={hasError || undefined}
       >
         <span
+          id={valueId}
           className="select-field__value"
           data-placeholder={selectedOption === undefined ? 'true' : 'false'}
         >
-          {selectedOption?.label ?? placeholder}
+          {displayedValue}
         </span>
         <svg
           className="select-field__chevron"
@@ -291,6 +311,8 @@ export function Select({
               id={listboxId}
               className="select-field__listbox"
               role="listbox"
+              aria-label={ariaLabel}
+              aria-labelledby={label === undefined ? undefined : labelId}
             >
               {options.map((option, index) => (
                 <button
@@ -312,9 +334,17 @@ export function Select({
               ))}
             </div>
           ) : (
-            <div className="select-field__empty">No options available</div>
+            <div id={emptyId} className="select-field__empty">
+              No options available
+            </div>
           )}
         </div>
+      )}
+
+      {required && (
+        <span id={requiredId} className="select-field__visually-hidden">
+          Required
+        </span>
       )}
 
       {description !== undefined && (
