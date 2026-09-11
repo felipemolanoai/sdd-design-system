@@ -21,6 +21,9 @@ Abre la dirección local que indique Vite. Para detenerlo, pulsa Ctrl+C.
 - `npm run build`: comprueba TypeScript y genera la aplicación en `dist/`.
 - `npm run lint`: revisa el código con Oxlint, incluido en esta plantilla de Vite.
 - `npm run preview`: permite visualizar la compilación después de `npm run build`.
+- `npm run storybook`: inicia Storybook en modo desarrollo en el puerto 6006.
+- `npm run build-storybook`: genera la versión estática de Storybook en `storybook-static/`.
+- `npm run test`: ejecuta las pruebas una sola vez y termina; durante la configuración inicial también admite una suite vacía.
 
 ## Estructura
 
@@ -35,6 +38,9 @@ Abre la dirección local que indique Vite. Para detenerlo, pulsa Ctrl+C.
 - `tsconfig.app.json`: configuración para `src/`.
 - `tsconfig.node.json`: configuración para `vite.config.ts`.
 - `vite.config.ts`: configuración de Vite y del plugin React.
+- `.storybook/`: configuración mínima de Storybook y carga de los estilos globales.
+- `vitest.config.ts`: configuración de Vitest con el entorno DOM de pruebas.
+- `src/test/setup.ts`: limpieza compartida después de cada prueba de componentes.
 
 ## Continuar el curso
 
