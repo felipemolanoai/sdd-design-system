@@ -1,0 +1,241 @@
+.select-field {
+  --select-control-min-height: 40px;
+  --select-control-font-size: 16px;
+  --select-control-line-height: 24px;
+  --select-content-padding-inline: 12px;
+  --select-label-font-size: 14px;
+  --select-label-line-height: 20px;
+  --select-description-font-size: 12px;
+  --select-description-line-height: 16px;
+  --select-label-control-gap: 6px;
+  --select-radius: 8px;
+  --select-chevron-size: 18px;
+  --select-border-width: 1px;
+  --select-focus-ring-width: 2px;
+  --select-popup-gap: 4px;
+  --select-popup-max-height: 240px;
+  --select-popup-offset: calc(
+    var(--select-control-min-height) + var(--select-popup-gap)
+  );
+
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  color: var(--text, CanvasText);
+  font-family: var(--sans, system-ui, sans-serif);
+  text-align: start;
+}
+
+.select-field[data-has-label='true'] {
+  --select-popup-offset: calc(
+    var(--select-label-line-height) + var(--select-label-control-gap) +
+      var(--select-control-min-height) + var(--select-popup-gap)
+  );
+}
+
+.select-field[data-size='sm'] {
+  --select-control-min-height: 32px;
+  --select-control-font-size: 14px;
+  --select-control-line-height: 20px;
+  --select-content-padding-inline: 10px;
+  --select-label-font-size: 12px;
+  --select-label-line-height: 16px;
+  --select-description-font-size: 12px;
+  --select-description-line-height: 16px;
+  --select-label-control-gap: 4px;
+  --select-radius: 6px;
+  --select-chevron-size: 16px;
+}
+
+.select-field[data-size='lg'] {
+  --select-control-min-height: 48px;
+  --select-control-font-size: 18px;
+  --select-control-line-height: 26px;
+  --select-content-padding-inline: 16px;
+  --select-label-font-size: 16px;
+  --select-label-line-height: 24px;
+  --select-description-font-size: 14px;
+  --select-description-line-height: 20px;
+  --select-label-control-gap: 8px;
+  --select-radius: 10px;
+  --select-chevron-size: 20px;
+}
+
+.select-field__label {
+  display: block;
+  margin: 0 0 var(--select-label-control-gap);
+  color: var(--text-h, CanvasText);
+  font-size: var(--select-label-font-size);
+  font-weight: 600;
+  line-height: var(--select-label-line-height);
+}
+
+.select-field__required,
+.select-field__description[data-message='error'] {
+  color: var(--error, var(--accent, currentColor));
+}
+
+.select-field__trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--select-control-min-height);
+  margin: 0;
+  padding: 0 var(--select-content-padding-inline);
+  border: var(--select-border-width) solid var(--border, currentColor);
+  border-radius: var(--select-radius);
+  color: var(--text-h, CanvasText);
+  background: var(--bg, Canvas);
+  font-family: inherit;
+  font-size: var(--select-control-font-size);
+  line-height: var(--select-control-line-height);
+  text-align: start;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.select-field__trigger:not(:disabled):hover {
+  border-color: var(--accent-border, var(--accent, currentColor));
+}
+
+.select-field__trigger:focus-visible,
+.select-field__option:focus-visible {
+  outline: var(--select-focus-ring-width) solid var(--accent, currentColor);
+  outline-offset: 2px;
+}
+
+.select-field[data-open='true'] .select-field__trigger {
+  border-color: var(--accent, currentColor);
+  box-shadow: 0 0 0 var(--select-border-width)
+    var(--accent-border, var(--accent, currentColor));
+}
+
+.select-field[data-invalid='true'] .select-field__trigger {
+  border-color: var(--error, var(--accent, currentColor));
+}
+
+.select-field__trigger:disabled {
+  color: var(--text, CanvasText);
+  background: var(--code-bg, var(--bg, Canvas));
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.select-field[data-disabled='true'] .select-field__label,
+.select-field[data-disabled='true'] .select-field__description {
+  opacity: 0.65;
+}
+
+.select-field__value {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-field__value[data-placeholder='true'] {
+  color: var(--text, CanvasText);
+}
+
+.select-field__chevron {
+  flex: 0 0 auto;
+  inline-size: var(--select-chevron-size);
+  block-size: var(--select-chevron-size);
+  transition: transform 150ms ease;
+}
+
+.select-field[data-open='true'] .select-field__chevron {
+  transform: rotate(180deg);
+}
+
+.select-field__popup {
+  position: absolute;
+  z-index: 10;
+  inset-block-start: var(--select-popup-offset);
+  inset-inline: 0;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-block-size: var(--select-popup-max-height);
+  overflow-y: auto;
+  border: var(--select-border-width) solid var(--border, currentColor);
+  border-radius: var(--select-radius);
+  background: var(--bg, Canvas);
+  box-shadow: var(--shadow, none);
+}
+
+.select-field__listbox {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.select-field__option,
+.select-field__empty {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--select-control-min-height);
+  padding: 0 var(--select-content-padding-inline);
+  color: var(--text-h, CanvasText);
+  font-family: inherit;
+  font-size: var(--select-control-font-size);
+  line-height: var(--select-control-line-height);
+  text-align: start;
+}
+
+.select-field__option {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.select-field__option:hover {
+  background: var(--accent-bg, transparent);
+}
+
+.select-field__option:focus-visible {
+  outline-offset: -2px;
+}
+
+.select-field__option[aria-selected='true'] {
+  background: var(--accent-bg, transparent);
+  font-weight: 600;
+}
+
+.select-field__option[aria-selected='true']::after {
+  content: '✓';
+  margin-inline-start: auto;
+  font-weight: 700;
+}
+
+.select-field__empty {
+  color: var(--text, CanvasText);
+}
+
+.select-field__description {
+  margin: 4px 0 0;
+  color: var(--text, CanvasText);
+  font-size: var(--select-description-font-size);
+  line-height: var(--select-description-line-height);
+}
+
+.select-field__error-prefix {
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select-field__trigger,
+  .select-field__chevron {
+    transition: none;
+  }
+}
